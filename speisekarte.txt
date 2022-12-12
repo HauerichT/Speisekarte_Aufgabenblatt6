@@ -1,7 +1,6 @@
 Suppe, 200, Vorspeisen
 Nudeln, 2100, Hauptspeisen
-Döner, 1500, Hauptspeisen
 Eis, 100, Nachspeisen
 Pudding, 140, Nachspeisen
-Bier, 120, Getränke
 Cola, 100, Getränke
+Pizza, 3330, Hauptspeisen

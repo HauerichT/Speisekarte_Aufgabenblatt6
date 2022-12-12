@@ -60,13 +60,13 @@ def gerichtHinzufuegen(karte):
                     print("Keine bestehende Kategorie gewählt!\n")
                 else:
                     lastKey = next(reversed(karte.keys()))
-                    newItemKey = lastKey+1
+                    newItemKey = lastKey + 1
                     karte[newItemKey] = {}
                     karte[newItemKey]["gericht"] = neuesGericht
                     karte[newItemKey]["preis"] = neuesGerichtPreis
-                    karte[newItemKey]["kategorie"] = kategorien[int(neuesGerichtKategorie)-1]
-
+                    karte[newItemKey]["kategorie"] = kategorien[int(neuesGerichtKategorie) - 1]
                     return karte
+
 
 # Methode um ein Gericht aus der Speisekarte zu löschen
 def gerichtLoeschen(karte):
@@ -100,8 +100,8 @@ def dateiSchreiben(karte, pfad):
         print("Die Datein in " + pfad + " konnte nicht gefunden werden!")
     # wenn datei geöffnet werden kann, wird die aktualisierte Speisekarte in die Textdatei geschrieben
     else:
-        for speise, preis in karte.items():
-            datei.write(str(speise) + ", " + str(preis) + "\n")
+        for id, info in karte.items():
+            datei.write(info["gericht"] + ", " + info["preis"] + ", " + info["kategorie"] + "\n")
         # schließt datei und beendet die while-Schleife (beendet das Programm)
         datei.close()
 
@@ -122,8 +122,11 @@ def dateiLesen(karte, pfad):
             if not i.isspace():
                 # entfernt \n am Ende einer Zeile
                 i = i.rstrip()
-                # teilt jede Zeile in gericht und preis, wo ein "," ist
-                (gericht, preis, kategorie) = i.split(",")
+                try:
+                    # teilt jede Zeile in gericht und preis, wo ein "," ist
+                    (gericht, preis, kategorie) = i.split(",")
+                except:
+                    print("Es wurden nicht valide Zeilen gefunden, welche nicht berücksichtigt werden!")
                 # entfernt das Leerzeichen nach dem Komma
                 preis = preis[1:]
                 kategorie = kategorie[1:]
