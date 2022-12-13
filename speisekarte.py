@@ -1,5 +1,5 @@
-# Aufgabenblatt 5
-# Aufgabe: 2. Die zweite Speisekarte
+# Aufgabenblatt 6
+# Aufgabe: 3
 # Name: Timo Haverich
 
 # importiert das Modul os um den relativen Pfad ermitteln zu können
@@ -15,32 +15,38 @@ dateiPfad = ordnerPfad + '/speisekarte.txt'
 
 
 # Methode um die Speisekarte anzuzeigen
-def speisekarteAnzeigen(karte):
+def printSpeisekarte(karte):
     # prüft, ob die Speisekarte Inhalt besitzt
     if len(karte) > 0:
 
         print("\n----- Speisekarte -----")
-        print(len(karte))
-        foundKat = False
+
+        countGerichte = 0
         for kat in kategorien:
+            # gibt den Namen der Kategorie aus
             print(kat + ": ")
+            # gibt die Elemente passend zur Kategorie aus
             for id, info in karte.items():
                 if info["kategorie"] == kat:
                     print(str(id) + ": " + info["gericht"] + ", " + info["preis"] + "ct")
-                    foundKat = True
-            if not foundKat:
-                print("Noch kein Gericht in dieser Kategorie.")
+                    countGerichte += 1
+
+            # prüft ob Kategorie leer ist
+            if countGerichte == 0:
+                print("Keine Gerichte in dieser Kategorie!")
+            else:
+                countGerichte = 0
 
     else:
         print("\nDie Speisekarte ist leer!")
 
 
 # Methode um ein Gericht zur Speisekarte hinzuzufügen
-def gerichtHinzufuegen(karte):
+def addGericht(karte):
     # Abfrage des Namens
-    neuesGericht = input("\nName des neuen Gerichts: ")
+    neuesGerichtName = input("\nName des neuen Gerichts: ")
     # prüft, ob Eingabe leer ist
-    if neuesGericht == "":
+    if neuesGerichtName == "":
         pass
     else:
         # Abfrage des Preises
@@ -49,38 +55,51 @@ def gerichtHinzufuegen(karte):
         if neuesGerichtPreis == "":
             pass
         else:
+            # Abfrage der Kategorie, bis Methode returnt wird
             while True:
                 print("1: Vorspeisen\n2: Hauptspeisen\n3: Nachspeisen\n4: Getränke")
+
                 neuesGerichtKategorie = input("Nummer der Kategorie: ")
 
+                # prüft, ob Eingabe leer ist
                 if neuesGerichtKategorie == "":
                     return karte
 
+                # prüft, ob Eingabe zu Kategorie passt
                 if neuesGerichtKategorie != "1" and neuesGerichtKategorie != "2" and neuesGerichtKategorie != "3" and neuesGerichtKategorie != "4":
                     print("Keine bestehende Kategorie gewählt!\n")
                 else:
-                    lastKey = next(reversed(karte.keys()))
+                    # fügt neues Gericht hinzu
+                    lastKey = list(karte)[-1]
                     newItemKey = lastKey + 1
                     karte[newItemKey] = {}
-                    karte[newItemKey]["gericht"] = neuesGericht
+                    karte[newItemKey]["gericht"] = neuesGerichtName
                     karte[newItemKey]["preis"] = neuesGerichtPreis
                     karte[newItemKey]["kategorie"] = kategorien[int(neuesGerichtKategorie) - 1]
+                    print(neuesGerichtName + " hinzugefügt!")
                     return karte
 
 
 # Methode um ein Gericht aus der Speisekarte zu löschen
-def gerichtLoeschen(karte):
+def removeGericht(karte):
+    # prüft, ob die Speisekarte Inhalt besitzt
     if len(karte) > 0:
 
+        # Abfrage des zu löschenden Gerichts, bis Methode returnt wird
         while True:
-            speisekarteAnzeigen(karte)
-            deletInput = input("\nNummer des zu löschenden Elements eingeben: ")
+            # zeigt Speisekarte
+            printSpeisekarte(karte)
 
-            if deletInput == "":
+            # Abfrage des zu löschenden Elements
+            removeEingabe = input("\nNummer des zu löschenden Elements eingeben: ")
+
+            # prüft, ob Eingabe leer ist
+            if removeEingabe == "":
                 return karte
 
+            # sucht das zu löschende Element und entfernt es aus Karte
             for id, info in karte.items():
-                if str(id) == deletInput:
+                if str(id) == removeEingabe:
                     del karte[id]
                     print(info["gericht"] + " erfolgreich gelöscht!")
                     return karte
@@ -91,13 +110,13 @@ def gerichtLoeschen(karte):
 
 
 # Methode um die aktualisierten Daten zurück in die Datei zu schreiben
-def dateiSchreiben(karte, pfad):
-    # versucht datei zum schreiben öffnen
+def writeDatei(karte, pfad):
+    # versucht datei zum Schreiben öffnen
     try:
         datei = open(pfad, mode="w")
     # wirft Fehler, wenn Datei nicht geöffnet werden kann
     except FileNotFoundError:
-        print("Die Datein in " + pfad + " konnte nicht gefunden werden!")
+        print("Die Datei in " + pfad + " konnte nicht gefunden werden!")
     # wenn datei geöffnet werden kann, wird die aktualisierte Speisekarte in die Textdatei geschrieben
     else:
         for id, info in karte.items():
@@ -107,69 +126,64 @@ def dateiSchreiben(karte, pfad):
 
 
 # Methode um die Daten aus der Datei zu lesen
-def dateiLesen(karte, pfad):
-    # versucht datei zum lesen öffnen
+def readDatei(karte, pfad):
+    # versucht datei zum Lesen zu öffnen
     try:
         datei = open(pfad, mode="r")
     # wirft Fehler, wenn Datei nicht geöffnet werden kann
     except FileNotFoundError:
-        print("Die Datein in " + pfad + "konnte nicht gefunden werden!")
+        print("Die Datei in " + pfad + "konnte nicht gefunden werden!")
     # wenn datei geöffnet werden kann, wird das Programm weiter ausgeführt
     else:
-        # formatiert den Inhalt der Datei
         counter = 1
         for i in datei:
+            # formatiert den Inhalt der Datei
             if not i.isspace():
                 # entfernt \n am Ende einer Zeile
                 i = i.rstrip()
                 try:
                     # teilt jede Zeile in gericht und preis, wo ein "," ist
                     (gericht, preis, kategorie) = i.split(",")
+                # wirft Fehler, wenn Zeilen nicht valide sind
                 except:
-                    print("Es wurden nicht valide Zeilen gefunden, welche nicht berücksichtigt werden!")
+                    print(i + " = nicht valide Zeile! Diese wird nicht berücksichtigt")
+
                 # entfernt das Leerzeichen nach dem Komma
                 preis = preis[1:]
                 kategorie = kategorie[1:]
 
-                kategorieValide = False
-                for kat in kategorien:
-                    if kategorie == kat:
-                        kategorieValide = True
-
-                if not kategorieValide:
-                    print(gericht + " hat leider keine valide Kategorie und wird somit nicht berücksichtigt!")
-                else:
-                    # speichert die Speisekarte im dictionary speisekarte
-                    karte[counter] = {}
-                    karte[counter]["gericht"] = gericht
-                    karte[counter]["preis"] = preis
-                    karte[counter]["kategorie"] = kategorie
-                    counter += 1
+                # speichert die Speisekarte im dictionary speisekarte
+                karte[counter] = {}
+                karte[counter]["gericht"] = gericht
+                karte[counter]["preis"] = preis
+                karte[counter]["kategorie"] = kategorie
+                counter += 1
 
 
-# ruft die Methode dateiLesen auf
-dateiLesen(speisekarte, dateiPfad)
+# ruft die Methode readDatei auf, um die Datei einzulesen
+readDatei(speisekarte, dateiPfad)
 
 # Variabel zur Prüfung, ob Programm weiter ausgeführt werden soll
-programmAusfuehren = True
+run = True
 
 # wird ausgeführt, solange das programm nicht beendet wird
-while programmAusfuehren:
+while run:
     # gibt das Hauptmenü auf der Konsole aus
     print(
         "\nHauptmenü:" + "\na = Speisekarte anzeigen" + "\nn = neues Gericht hinzufügen" + "\nl = Gericht löschen" + "\ne = Programmende" + "\n(Mit Enter können Sie jedes Menü wieder verlassen!)")
+
     # fragt Eingabe des gewünschten Menüs ab
     eingabe = input("\nBuchstaben eingeben um Menüpunkt zu wählen: ")
 
     # prüft, welches Menü gewählt wurde und führt die jeweilige Methode/Aktion aus
     if eingabe == "a":
-        speisekarteAnzeigen(speisekarte)
+        printSpeisekarte(speisekarte)
     elif eingabe == "n":
-        speisekarte = gerichtHinzufuegen(speisekarte)
+        speisekarte = addGericht(speisekarte)
     elif eingabe == "l":
-        speisekarte = gerichtLoeschen(speisekarte)
+        speisekarte = removeGericht(speisekarte)
     elif eingabe == "e":
-        dateiSchreiben(speisekarte, dateiPfad)
-        programmAusfuehren = False
+        writeDatei(speisekarte, dateiPfad)
+        run = False
     else:
         print("\nEingabe ungültig!")
