@@ -1,131 +1,241 @@
-# Aufgabenblatt 6
-# Aufgabe: 3
-# Name: Timo Haverich
+"""
+Aufgabe: Speisekarte
+Name: Timo Haverich
+"""
 
-# importiert das Modul os um den relativen Pfad ermitteln zu können
 from os import path
 
-# Deklaration der Speisekarte als dictionary
-speisekarte = {}
-kategorien = ["Vorspeisen", "Hauptspeisen", "Nachspeisen", "Getränke"]
+# Dateipfad
+folderPath = path.dirname(__file__)
+filePath = folderPath + '/speisekarte.txt'
 
-# Speicherung des Dateipfades der Speisekarte
-ordnerPfad = path.dirname(__file__)
-dateiPfad = ordnerPfad + '/speisekarte.txt'
+# Speisekarte
+menu = []
 
 
-# Methode um die Speisekarte anzuzeigen
-def printSpeisekarte(karte):
+# Methode gibt die aktuelle Speisekarte auf der Konsole aus
+def printMenu(_menu, _heading="Speisekarte"):
     # prüft, ob die Speisekarte Inhalt besitzt
-    if len(karte) > 0:
+    if len(_menu) > 0:
+        print("\n----- " + _heading + " -----")
 
-        print("\n----- Speisekarte -----")
-        countGerichte = 1
-        for kat in kategorien:
-            # gibt den Namen der Kategorie aus
-            print(kat + ": ")
-            # gibt die Elemente passend zur Kategorie aus
-            for gericht, (preis, kategorie) in karte.items():
-                if kategorie == kat:
-                    print(str(countGerichte) + ": " + gericht + ", " + preis + "ct")
-                    countGerichte += 1
+        # gibt die Elemente der Kategorie "Vorspeisen" aus
+        print("Vorspeisen:")
+        for i in range(len(_menu)):
+            for j in range(len(_menu[i])):
+                if _menu[i][j] == "Vorspeisen":
+                    print(str(_menu.index(_menu[i])) + ": " + _menu[i][0] + ", " + _menu[i][1] + "ct")
+
+        # gibt die Elemente der Kategorie "Hauptspeisen" aus
+        print("Hauptspeisen:")
+        for i in range(len(_menu)):
+            for j in range(len(_menu[i])):
+                if _menu[i][j] == "Hauptspeisen":
+                    print(str(_menu.index(_menu[i])) + ": " + _menu[i][0] + ", " + _menu[i][1] + "ct")
+
+        # gibt die Elemente der Kategorie "Nachspeisen" aus
+        print("Nachspeisen:")
+        for i in range(len(_menu)):
+            for j in range(len(_menu[i])):
+                if _menu[i][j] == "Nachspeisen":
+                    print(str(_menu.index(_menu[i])) + ": " + _menu[i][0] + ", " + _menu[i][1] + "ct")
+
+        # gibt die Elemente der Kategorie "Getränke" aus
+        print("Getränke:")
+        for i in range(len(_menu)):
+            for j in range(len(_menu[i])):
+                if _menu[i][j] == "Getränke":
+                    print(str(_menu.index(_menu[i])) + ": " + _menu[i][0] + ", " + _menu[i][1] + "ct")
 
     else:
         print("\nDie Speisekarte ist leer!")
 
 
-# Methode um ein Gericht zur Speisekarte hinzuzufügen
-def addGericht(karte):
-    neuesGerichtName = ""
-    neuesGerichtPreis = ""
-    neuesGerichtKategorie = ""
+# Methode ändert Attribute eines Elementes der Speisekarte
+def changeElement(_menu):
+    # gibt zunächst die Speisekarte aus
+    printMenu(_menu, _heading="Gericht ändern")
+
+    # speichert das zu ändernde Element
+    changingElement = None
+    # speichert das zu ändernde Attribut
+    changingAttribute = None
+
+    # fragt das zu ändernde Element ab
+    runGetElement = True
+    while runGetElement:
+        inputChange = input("\nNummer der Speise: ")
+        # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+        if inputChange == "":
+            return _menu
+        # prüft, ob die Eingabe valide ist
+        if inputChange.isnumeric() and len(_menu) > int(inputChange) >= 0:
+            changingElement = int(inputChange)
+            runGetElement = False
+        else:
+            print("Nummer gibt es nicht!")
+
+    # fragt das zu ändernde Attribut ab
+    runGetAttribute = True
+    while runGetAttribute:
+        print(_menu[changingElement][0] + " wird bearbeitet.\n\n1: Name\n2: Preis\n3: Kategorie")
+        inputAttribute = input("Nummer des zu ändernden Attributs: ")
+        # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+        if inputAttribute == "":
+            return _menu
+        # prüft, ob die Eingabe valide ist
+        if inputAttribute.isnumeric() and 3 >= int(inputAttribute) > 0:
+            changingAttribute = int(inputAttribute)
+            runGetAttribute = False
+        else:
+            print("Attribut gibt es nicht!")
+
+    # ändert den Namen
+    if changingAttribute == 1:
+        # fragt den neuen Namen ab
+        newName = input("Umbenennen in: ")
+        # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+        if newName == "":
+            return _menu
+        # setzt den neuen Namen
+        _menu[changingElement][0] = newName
+        print("Name von " + _menu[changingElement][0] + " geändert.")
+        return _menu
+
+    # ändert den Preis
+    if changingAttribute == 2:
+        while True:
+            # fragt den neuen Preis ab
+            newPrice = input("Neuer Preis: ")
+            # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+            if newPrice == "":
+                return _menu
+            # prüft, ob Eingabe eine Zahl ist und setzt ggf. den neuen Preis
+            if newPrice.isnumeric():
+                _menu[changingElement][1] = newPrice
+                print("Preis von " + _menu[changingElement][0] + " geändert.")
+                return _menu
+            else:
+                print("Preis muss eine Zahl sein!")
+
+    # ändert die Kategorie
+    if changingAttribute == 3:
+        while True:
+            print("\n1: Vorspeisen\n2: Hauptspeisen\n3: Nachspeisen\n4: Getränke")
+            # fragt die neue Kategorie ab
+            newCategory = input("Neue Kategorie: ")
+            # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+            if newCategory == "":
+                return _menu
+            # ändert die Kategorie je nach Eingabe
+            if newCategory == "1":
+                _menu[changingElement][2] = "Vorspeisen"
+                print("Kategorie von " + _menu[changingElement][0] + " geändert.")
+                return _menu
+            elif newCategory == "2":
+                _menu[changingElement][2] = "Hauptspeisen"
+                print("Kategorie von " + _menu[changingElement][0] + " geändert.")
+                return _menu
+            elif newCategory == "3":
+                _menu[changingElement][2] = "Nachspeisen"
+                print("Kategorie von " + _menu[changingElement][0] + " geändert.")
+                return _menu
+            elif newCategory == "4":
+                _menu[changingElement][2] = "Getränke"
+                print("Kategorie von " + _menu[changingElement][0] + " geändert.")
+                return _menu
+            else:
+                print("Eingabe ungültig!")
+
+
+# Methode fügt ein Element zur Speisekarte hinzu
+def addElement(_menu):
+
+    newElementName = None
+    newElementPrice = None
+    newElementCategory = None
 
     print("\n----- Neues Gericht hinzufügen -----")
 
-    # get name of new product
+    # fragt den Namen des neuen Elementes ab
     runGetName = True
     while runGetName:
-        neuesGerichtName = input("Name: ")
-        if neuesGerichtName == "":
-            return karte
-
-        for gericht, (preis, kategorie) in karte.items():
-            if neuesGerichtName == gericht:
-                print("Gericht mit gleichem Namen gibt es bereits!")
-                return karte
-
+        # fragt Namen ab
+        newElementName = input("Name: ")
+        # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+        if newElementName == "":
+            return _menu
+        # prüft, ob es bereits ein Element mit den gleichen Namen gibt
+        for i in range(len(_menu)):
+            for j in range(len(_menu[i])):
+                if newElementName == _menu[i][0]:
+                    print("Gericht mit gleichem Namen gibt es bereits!")
         runGetName = False
 
-    # get price of new product
+    # fragt den Preis des neuen Elementes ab
     runGetPrice = True
     while runGetPrice:
-        neuesGerichtPreis = input("Preis: ")
-        if neuesGerichtPreis == "":
-            return karte
-
-        if not neuesGerichtPreis.isnumeric():
+        # fragt Preis ab
+        newElementPrice = input("Preis: ")
+        # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+        if newElementPrice == "":
+            return _menu
+            # prüft, ob Preis eine Zahl ist
+        if not newElementPrice.isnumeric():
             print("Preis muss eine Zahl sein!")
         else:
             runGetPrice = False
 
-    # get category of new product
+    # fragt die Kategorie des neuen Elementes ab
     runGetCategory = True
     while runGetCategory:
+        # gibt die verfügbaren Kategorien aus
         print("1: Vorspeisen\n2: Hauptspeisen\n3: Nachspeisen\n4: Getränke")
-
-        neuesGerichtKategorie = input("Nummer der Kategorie: ")
-
-        # prüft, ob Eingabe leer ist
-        if neuesGerichtKategorie == "":
-            return karte
-
-        # prüft, ob Eingabe zu Kategorie passt
-        if neuesGerichtKategorie == "1":
-            neuesGerichtKategorie = kategorien[0]
+        # fragt die Kategorie ab
+        newElementCategory = input("Nummer der Kategorie: ")
+        # prüft, ob in das Hauptmenü zurückgekehrt werden soll
+        if newElementCategory == "":
+            return _menu
+            # prüft, ob Eingabe zu Kategorie passt
+        if newElementCategory == "1":
+            newElementCategory = "Vorspeisen"
             runGetCategory = False
-        elif neuesGerichtKategorie == "2":
-            neuesGerichtKategorie = kategorien[1]
+        elif newElementCategory == "2":
+            newElementCategory = "Hauptspeisen"
             runGetCategory = False
-        elif neuesGerichtKategorie == "3":
-            neuesGerichtKategorie = kategorien[2]
+        elif newElementCategory == "3":
+            newElementCategory = "Nachspeisen"
             runGetCategory = False
-        elif neuesGerichtKategorie == "4":
-            neuesGerichtKategorie = kategorien[3]
+        elif newElementCategory == "4":
+            newElementCategory = "Getränke"
             runGetCategory = False
         else:
-            print("Keine bestehende Kategorie gewählt!")
+            print("Keine bestehende Kategorie gewählt!\n")
 
     # add new data
-    karte[neuesGerichtName] = (neuesGerichtPreis, neuesGerichtKategorie)
-    print(neuesGerichtName + " hinzugefügt!")
-    return karte
+    _menu.append([newElementName, newElementPrice, newElementCategory])
+    print(newElementName + " hinzugefügt!")
+    return _menu
 
 
-# Methode um ein Gericht aus der Speisekarte zu löschen
-def removeGericht(karte):
+# Methode löscht ein Element von der Speisekarte
+def removeElement(_menu):
     # prüft, ob die Speisekarte Inhalt besitzt
-    if len(karte) > 0:
-
-        runGetDeleteNumber = True
-        while runGetDeleteNumber:
-
-            printSpeisekarte(karte)
-
-            # Abfrage des zu löschenden Elements
+    if len(_menu) > 0:
+        while True:
+            # gibt die Speisekarte aus
+            printMenu(_menu, _heading="Gericht löschen")
+            # fragt das zu löschende Element ab
             inputRemove = input("\nNummer des zu löschenden Elements eingeben: ")
-
-            # prüft, ob Eingabe leer ist
+            # prüft, ob in das Hauptmenü zurückgekehrt werden soll
             if inputRemove == "":
-                return karte
-
-            if inputRemove.isnumeric() and len(karte) >= int(inputRemove) > 0:
-                counter = 1
-                for gericht, (preis, kategorie) in karte.items():
-                    if int(inputRemove) == counter:
-                        del karte[gericht]
-                        print(gericht + " gelöscht!")
-                        return karte
-                    counter += 1
+                return _menu
+                # prüft, ob die Eingabe valide ist und löscht das Element
+            if inputRemove.isnumeric() and len(_menu) > int(inputRemove) >= 0:
+                index = int(_menu.index(_menu[int(inputRemove)]))
+                print(_menu[index][0] + " gelöscht!")
+                del _menu[index]
+                return _menu
             else:
                 print("Falsche Eingabe!")
 
@@ -133,76 +243,75 @@ def removeGericht(karte):
         print("\nDie Speisekarte ist leer!")
 
 
-# Methode um die aktualisierten Daten zurück in die Datei zu schreiben
-def writeDatei(karte, pfad):
-    # versucht datei zum Schreiben öffnen
+# Methode schreibt die Speisekarte in die Datei zurück
+def writeFile(_menu, _path):
+    # versucht Datei zum Schreiben zu öffnen
     try:
-        datei = open(pfad, mode="w")
+        file = open(_path, mode="w")
     # wirft Fehler, wenn Datei nicht geöffnet werden kann
     except FileNotFoundError:
-        print("Die Datei in " + pfad + " konnte nicht gefunden werden!")
+        print("Die Datei in " + _path + " konnte nicht gefunden werden!")
     # wenn datei geöffnet werden kann, wird die aktualisierte Speisekarte in die Textdatei geschrieben
     else:
-        for gericht, (preis, kategorie) in karte.items():
-            datei.write(gericht + ", " + preis + ", " + kategorie + "\n")
-        # schließt datei und beendet die while-Schleife (beendet das Programm)
-        datei.close()
+        for i in range(len(_menu)):
+            file.write(_menu[i][0] + ", " + _menu[i][1] + ", " + _menu[i][2] + "\n")
+        # schließt Datei
+        file.close()
 
 
-# Methode um die Daten aus der Datei zu lesen
-def readDatei(karte, pfad):
-    # versucht datei zum Lesen zu öffnen
+# Methode liest Daten aus Speisekartendatei aus
+def readFile(_menu, _path):
+    # versucht Datei zum Lesen zu öffnen
     try:
-        datei = open(pfad, mode="r")
+        file = open(_path, mode="r")
     # wirft Fehler, wenn Datei nicht geöffnet werden kann
     except FileNotFoundError:
-        print("Die Datei in " + pfad + "konnte nicht gefunden werden!")
-    # wenn datei geöffnet werden kann, wird das Programm weiter ausgeführt
+        print("Die Datei in " + _path + "konnte nicht gefunden werden!")
+    # wenn Datei geöffnet werden kann, wird das Programm weiter ausgeführt
     else:
-        for i in datei:
+        for i in file:
             # formatiert den Inhalt der Datei
             if not i.isspace():
                 # entfernt \n am Ende einer Zeile
                 i = i.rstrip()
                 try:
                     # teilt jede Zeile in gericht und preis, wo ein "," ist
-                    (gericht, preis, kategorie) = i.split(",")
+                    (name, price, category) = i.split(",")
                 # wirft Fehler, wenn Zeilen nicht valide sind
                 except:
                     print(i + " = nicht valide Zeile! Diese wird nicht berücksichtigt")
 
                 # entfernt das Leerzeichen nach dem Komma
-                preis = preis[1:]
-                kategorie = kategorie[1:]
+                price = price[1:]
+                category = category[1:]
 
                 # speichert die Speisekarte im dictionary speisekarte
-                karte[gericht] = (preis, kategorie)
+                _menu.append([name, price, category])
+    return _menu
 
 
 # ruft die Methode readDatei auf, um die Datei einzulesen
-readDatei(speisekarte, dateiPfad)
-
+menu = readFile(menu, filePath)
 # Variabel zur Prüfung, ob Programm weiter ausgeführt werden soll
 run = True
-
 # wird ausgeführt, solange das programm nicht beendet wird
 while run:
     # gibt das Hauptmenü auf der Konsole aus
-    print(
-        "\nHauptmenü:" + "\na = Speisekarte anzeigen" + "\nn = neues Gericht hinzufügen" + "\nl = Gericht löschen" + "\ne = Programmende" + "\n(Mit Enter können Sie jedes Menü wieder verlassen!)")
-
+    print("\n----- Hauptmenü -----")
+    print("a = Speisekarte anzeigen" + "\nn = neues Gericht hinzufügen" + "\nl = Gericht löschen" + "\nc = Gericht ändern" + "\ne = Programmende")
     # fragt Eingabe des gewünschten Menüs ab
-    eingabe = input("\nBuchstaben eingeben um Menüpunkt zu wählen: ")
-
+    inputMenu = input("\nBuchstaben eingeben um Menüpunkt zu wählen: ")
     # prüft, welches Menü gewählt wurde und führt die jeweilige Methode/Aktion aus
-    if eingabe == "a":
-        printSpeisekarte(speisekarte)
-    elif eingabe == "n":
-        speisekarte = addGericht(speisekarte)
-    elif eingabe == "l":
-        speisekarte = removeGericht(speisekarte)
-    elif eingabe == "e":
-        writeDatei(speisekarte, dateiPfad)
+    if inputMenu == "a":
+        printMenu(menu)
+    elif inputMenu == "n":
+        menu = addElement(menu)
+    elif inputMenu == "l":
+        menu = removeElement(menu)
+    elif inputMenu == "c":
+        menu = changeElement(menu)
+    elif inputMenu == "e":
+        writeFile(menu, filePath)
         run = False
     else:
         print("\nEingabe ungültig!")

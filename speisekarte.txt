@@ -1,9 +1,8 @@
 Suppe, 4500, Vorspeisen
 Salat, 3000, Vorspeisen
-Pizza, 10000, Hauptspeisen
 Pasta, 9500, Hauptspeisen
-Eis, 3000, Nachspeisen
+döner, 3000, Hauptspeisen
 Pudding, 3000, Nachspeisen
+Eis, 3000, Nachspeisen
 Cola, 3900, Getränke
 Bier, 3000, Getränke
-Stulle, 3000, Hauptspeisen
